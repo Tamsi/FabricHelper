@@ -31,6 +31,7 @@ FabricHelper = function(canvasId, backgrounds, image) {
 
 	document.addEventListener("keydown", function(e) {
 		if(e.keyCode === 39) {
+			e.preventDefault();
 			if(this.bgIndex + 1 < this.backgrounds.length) {
 				this.bgIndex += 1;
 			} else {
@@ -38,6 +39,7 @@ FabricHelper = function(canvasId, backgrounds, image) {
 			}
 			this.canvas.setBackgroundImage(this.backgrounds[this.bgIndex], this.canvas.renderAll.bind(this.canvas));
 		} else if(e.keyCode === 37) {
+			e.preventDefault();
 			if(this.bgIndex - 1 > 0) {
 				this.bgIndex -= 1;
 			} else {
