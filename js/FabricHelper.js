@@ -6,6 +6,9 @@ FabricHelper = function(canvasId, backgrounds, image) {
 	this.bgIndex = 0;
 	this.position = [];
 
+	this.activeObject;
+
+
 	this.canvas = new fabric.Canvas(this.canvasId, {	
 	  selection: false
 	});
@@ -25,12 +28,47 @@ FabricHelper = function(canvasId, backgrounds, image) {
 	this.listen('object:scaling');
 	this.listen('object:moving');
 
+
 	document.addEventListener("dblclick", function(e) {
 		console.log(this.position);
 	}.bind(this));
 
+	document.addEventListener('keydown', function(e) {
+		this.activeObject = this.canvas.getActiveObject();
+    	//left
+	    if(e.keyCode == 37) {
+	    	e.preventDefault();
+	    	if (this.activeObject) {
+	            this.activeObject.left -= 1;
+        	}
+	    }
+	    //top
+	    else if(e.keyCode == 38) {
+	    	e.preventDefault();
+	        if (this.activeObject) {
+	            this.activeObject.top -= 1;
+        	}
+	    }
+	    //right
+	    else if(e.keyCode == 39) {
+	    	e.preventDefault();
+	        if (this.activeObject) {
+	            this.activeObject.left += 1;
+        	}
+	    }
+	    //bottom
+	    else if(e.keyCode == 40) {
+	    	e.preventDefault();
+	        if (this.activeObject) {
+	            this.activeObject.top += 1;
+        	}
+	    }
+	    this.activeObject.setCoords();
+	    this.canvas.renderAll();
+	}.bind(this));
+
 	document.addEventListener("keydown", function(e) {
-		if(e.keyCode === 39) {
+		if(e.keyCode === 68) {
 			e.preventDefault();
 			if(this.bgIndex + 1 < this.backgrounds.length) {
 				this.bgIndex += 1;
@@ -38,7 +76,7 @@ FabricHelper = function(canvasId, backgrounds, image) {
 				this.bgIndex = 0;
 			}
 			this.canvas.setBackgroundImage(this.backgrounds[this.bgIndex], this.canvas.renderAll.bind(this.canvas));
-		} else if(e.keyCode === 37) {
+		} else if(e.keyCode === 81) {
 			e.preventDefault();
 			if(this.bgIndex - 1 > 0) {
 				this.bgIndex -= 1;
