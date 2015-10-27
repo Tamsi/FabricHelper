@@ -15,6 +15,8 @@ FabricHelper = function(canvasId, backgrounds, image) {
 
 	fabric.Image.fromURL(this.image, function(img) {
 	  img.scale(1).set({
+	  	originX: 'left',
+	  	originY: 'top',
 	    left: 150,
 	    top: 150,
 	    angle: 0
@@ -32,9 +34,10 @@ FabricHelper = function(canvasId, backgrounds, image) {
 FabricHelper.prototype.listenFabric = function(e) {
 	this.canvas.on(e, function(event) {
 	  if (event.target) {
+	  	console.log(event.target);
 	  	this.activeObject = event.target;
 	    //this.position[this.bgIndex] = "(" + event.target.scaleX + "," + event.target.scaleY + "," + event.target.left + "," + event.target.top + "," + event.target.angle + ")";
-	    this.position[this.bgIndex] = this.setPosition();
+	    this.position[this.bgIndex] = this.recordPosition();
 	  }
 	}.bind(this));
 }
@@ -86,7 +89,7 @@ FabricHelper.prototype.listenKeyboard = function() {
 			//si mon tableau a l'index en cours est vide, je mets les coo
 			if(typeof this.position[this.bgIndex] == 'undefined'){
 				//this.position[this.bgIndex] = "(" + this.activeObject.scaleX + "," + this.activeObject.scaleY + "," + this.activeObject.left + "," + this.activeObject.top + "," + this.activeObject.angle + ")";
-				this.position[this.bgIndex] = this.setPosition();
+				this.position[this.bgIndex] = this.recordPosition();
 			}
 			if(this.bgIndex + 1 < this.backgrounds.length) {
 				this.bgIndex += 1;
@@ -94,6 +97,8 @@ FabricHelper.prototype.listenKeyboard = function() {
 				this.bgIndex = 0;
 			}
 			this.canvas.setBackgroundImage(this.backgrounds[this.bgIndex], this.canvas.renderAll.bind(this.canvas));
+			this.setPosition();
+
 		} else if(e.keyCode === 81) {
 			e.preventDefault();
 			if(this.bgIndex - 1 >= 0) {
@@ -102,6 +107,7 @@ FabricHelper.prototype.listenKeyboard = function() {
 				this.bgIndex = this.backgrounds.length - 1;
 			}
 			this.canvas.setBackgroundImage(this.backgrounds[this.bgIndex], this.canvas.renderAll.bind(this.canvas));
+			this.setPosition();
 		}
 
 	    this.activeObject.setCoords();
@@ -110,6 +116,20 @@ FabricHelper.prototype.listenKeyboard = function() {
 
 }
 
+FabricHelper.prototype.recordPosition = function() {
+	return [this.activeObject.scaleX, this.activeObject.scaleY, this.activeObject.oCoords.tl.x, this.activeObject.oCoords.tl.y, this.activeObject.angle, this.activeObject.left, this.activeObject.top];
+}
+
 FabricHelper.prototype.setPosition = function() {
-	return "(" + this.activeObject.scaleX + "," + this.activeObject.scaleY + "," + this.activeObject.left + "," + this.activeObject.top + "," + this.activeObject.angle + ")";
+
+	if (typeof this.position[this.bgIndex] != 'undefined') {
+		this.activeObject.angle = this.position[this.bgIndex][4];
+		this.activeObject.oCoords.tl.x = this.position[this.bgIndex][2];
+		this.activeObject.oCoords.tl.y = this.position[this.bgIndex][3];
+		this.activeObject.left = this.position[this.bgIndex][5];
+		this.activeObject.top = this.position[this.bgIndex][6];
+		this.activeObject.scaleX = this.position[this.bgIndex][0];
+		this.activeObject.scaleY = this.position[this.bgIndex][1];
+		
+	}
 }
